@@ -2,22 +2,11 @@ package main
 
 import (
 	"log"
-	"os"
 )
 
 func main() {
-	// Lex conf file
-	// Parse conf file
-
-	// Read old conf
-	data, err := os.ReadFile("config.mi.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(data)
-
-	// Compare
+	// Lex migration file
+	// Parse migration file
 
 	// Start client
 	// Make database changes

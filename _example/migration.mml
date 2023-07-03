@@ -1,0 +1,12 @@
+foreach "User" {
+    change "confidence" to "score";
+    foreach "videos" {
+        delete "words";
+    }
+
+    change "email" to "contact" with value "asdf";
+
+    if "score" < 5 {
+        "score" with value 5;
+    }
+}
