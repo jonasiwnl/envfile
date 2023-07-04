@@ -2,9 +2,10 @@ package parser
 
 import (
 	"bufio"
-	"fmt" // Temporary
+	"fmt"
 	"io"
 	"log"
+	"os"
 	"unicode"
 )
 
@@ -92,7 +93,14 @@ func (l *Lexer) Lex() {
 			break
 		}
 
-		fmt.Printf("%d:%d\t%s\t%s\n", line, column, token.String(), token.text)
+		os.Stdout.WriteString(
+			fmt.Sprintf(
+				"%d:%d\t%s\t%s\n",
+				line,
+				column,
+				token.String(),
+				token.text,
+			))
 	}
 }
 

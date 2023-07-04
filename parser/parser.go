@@ -1,7 +1,6 @@
 package parser
 
-type Parser struct{}
-
-func NewParser() *Parser { return &Parser{} }
-
-func (p *Parser) Parse() {}
+func Parse() {
+	// Translates lexer input into syntax tree,
+	// then produces go mongodb commands
+}

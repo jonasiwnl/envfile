@@ -22,6 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
@@ -32,13 +33,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Lex migration file
+	// Lex & parse migration file
 	parser.NewLexer(file).Lex()
-
-	// Parse migration file
-	parser.NewParser().Parse()
+	parser.Parse()
 
 	// Make database changes
+	mongo.Execute(ctx, client)
 
 	// Clean up
 	os.Remove("temp") // TODO
