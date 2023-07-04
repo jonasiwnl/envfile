@@ -1,4 +1,4 @@
-package main
+package mongo
 
 import (
 	"context"
@@ -8,16 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func StartClient() error {
+func NewClient(uri string) (*mongo.Client, error) {
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.
 		Client().
-		ApplyURI("TODO").
+		ApplyURI(uri).
 		SetServerAPIOptions(serverAPI)
 
 	client, err := mongo.Connect(context.Background(), opts)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Ping database to confirm connection.
@@ -26,8 +26,8 @@ func StartClient() error {
 		RunCommand(context.Background(), bson.D{{Key: "ping", Value: 1}}).
 		Err()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return client, nil
 }
