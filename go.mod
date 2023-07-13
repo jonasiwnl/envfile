@@ -1,3 +1,3 @@
-module github.com/jonasiwnl/envfile
+module github.com/jonasiwnl/streamfile
 
 go 1.20

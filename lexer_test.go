@@ -1,9 +1,9 @@
-package envfile_test
+package streamfile_test
 
 import (
 	"testing"
 
-	"github.com/jonasiwnl/envfile"
+	"github.com/jonasiwnl/streamfile"
 )
 
 func TestLookupIdent(t *testing.T) {
@@ -13,29 +13,29 @@ func TestNextToken(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	rsToken := envfile.Token{envfile.RIGHTSQUIRLY, "{"}
+	rsToken := streamfile.Token{streamfile.RIGHTSQUIRLY, "{"}
 
 	if rsToken.Literal != "{" {
 		t.Error("expected tokens to match")
 	}
-	if rsToken.TokenType != envfile.RIGHTSQUIRLY {
+	if rsToken.TokenType != streamfile.RIGHTSQUIRLY {
 		t.Error("expected tokentypes to match")
 	}
 }
 
 func TestString(t *testing.T) {
-	lexer := envfile.NewLexer("foreach 'User' { change 's' to 'a' }")
+	lexer := streamfile.NewLexer("foreach 'User' { change 's' to 'a' }")
 
 	tokens := lexer.Lex()
-	expectedTokens := []envfile.Token{
-		{TokenType: envfile.FOREACH, Literal: "foreach"},
-		{TokenType: envfile.IDENT, Literal: "User"},
-		{TokenType: envfile.LEFTSQUIRLY, Literal: "{"},
-		{TokenType: envfile.CHANGE, Literal: "change"},
-		{TokenType: envfile.IDENT, Literal: "s"},
-		{TokenType: envfile.TO, Literal: "to"},
-		{TokenType: envfile.IDENT, Literal: "a"},
-		{TokenType: envfile.RIGHTSQUIRLY, Literal: "}"},
+	expectedTokens := []streamfile.Token{
+		{TokenType: streamfile.FOREACH, Literal: "foreach"},
+		{TokenType: streamfile.IDENT, Literal: "User"},
+		{TokenType: streamfile.LEFTSQUIRLY, Literal: "{"},
+		{TokenType: streamfile.CHANGE, Literal: "change"},
+		{TokenType: streamfile.IDENT, Literal: "s"},
+		{TokenType: streamfile.TO, Literal: "to"},
+		{TokenType: streamfile.IDENT, Literal: "a"},
+		{TokenType: streamfile.RIGHTSQUIRLY, Literal: "}"},
 	}
 	if len(*tokens) != len(expectedTokens) {
 		t.Error("expected lengths to match", len(*tokens), len(expectedTokens))

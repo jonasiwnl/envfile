@@ -1,4 +1,4 @@
-package envfile
+package streamfile
 
 func Parse() (*Environment, error) {
 	// Translates lexer input into syntax tree,

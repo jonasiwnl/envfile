@@ -1,4 +1,4 @@
-package envfile
+package streamfile
 
 import (
 	"log"
@@ -10,14 +10,14 @@ type Environment struct {
 }
 
 func SetUp() (func(), error) {
-	log.Println("ENVFILE: starting...")
+	log.Println("streamfile: starting...")
 
-	file, err := os.ReadFile("Envfile")
+	file, err := os.ReadFile("Streamfile")
 	if err != nil {
 		return nil, err
 	}
 
-	// Lex & parse Envfile
+	// Lex & parse streamfile
 	NewLexer(string(file)).Lex()
 	env, err := Parse()
 	if err != nil {
@@ -33,7 +33,7 @@ func SetUp() (func(), error) {
 }
 
 func (e *Environment) TearDown() {
-	log.Println("ENVFILE: cleaning up...")
+	log.Println("streamfile: cleaning up...")
 
-	log.Println("ENVFILE: done.")
+	log.Println("streamfile: done.")
 }
