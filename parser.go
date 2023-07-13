@@ -1,6 +1,8 @@
-package parser
+package envfile
 
-func Parse() {
+func Parse() (*Environment, error) {
 	// Translates lexer input into syntax tree,
 	// then produces go mongodb commands
+
+	return nil, nil
 }

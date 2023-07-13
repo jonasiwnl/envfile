@@ -1,8 +1,7 @@
-# MM
-tool for mongo database migrations (eventually)
+# Envfile
+environment made easy
 
 ## todo
-- figure out lexer -> parser -> controller pipeline
-- put config file optional path in env
-- add some command line flags?
-- remove godotenv dependency, write it manually
+- [ ] optionally pass path to Envfile
+- [ ] write and test lexer.go
+- [ ] write and test parser.go
