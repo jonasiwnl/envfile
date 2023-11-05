@@ -1,7 +1,7 @@
-# streamfile
-environment made easy
+# Sink
+a better way to share files
 
-## todo
-- [ ] optionally pass path to streamfile
-- [ ] write and test lexer.go
-- [ ] write and test parser.go
+## priority
+cli
+web app
+mobile app
