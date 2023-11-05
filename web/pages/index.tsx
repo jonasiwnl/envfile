@@ -1,5 +1,3 @@
-import Image from 'next/image'
-
 export default function Home() {
   return (
     <main
@@ -13,6 +11,5 @@ export default function Home() {
       <p>Or scan a document (only works on mobile)</p>
       <input type="file" capture="environment" accept="image/pdf" />
     </main>
-  )
+  );
 }
-

@@ -1,41 +1,107 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 )
 
-// TODO figure out how to do p2p
+type Resp struct {
+	data string
+	ok   bool
+}
 
 func up(path *string) error {
-	// TODO read file and POST req
-  fmt.Println("Not implemented yet!")
+	resp, err := http.Post(SERVERURL, "text/plain", bytes.NewBuffer(([]byte(*path))))
+	if err != nil {
+		return err
+	}
+
+	var key Resp
+	json.NewDecoder(resp.Body).Decode(&key)
+	if !key.ok {
+		return fmt.Errorf("server error. sorry !")
+	}
+
+	fmt.Println("*** success. key is " + key.data + " ***")
+
+	// listen for requests
+	listener, err := net.Listen("tcp", RECEIVERADDR)
+	if err != nil {
+		return err
+	}
+	defer listener.Close()
+
+	conn, err := listener.Accept()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = io.Copy(*path, conn)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Do you want to remove this file? (y/N)")
+	var ans string
+	fmt.Scanln(&ans)
+	if ans == "y" {
+		err = os.Remove(*path)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 func down(key *string) error {
-	fmt.Println(*key)
-
-	// TODO link
-	resp, err := http.Get("https://jonasiwnl.github.io/Jonas_Groening_resume.pdf")
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	out, err := os.Create("output") // TODO how to get filename?
+	// Request server with key
+	resp, err := http.Get(SERVERURL + "?key=" + *key)
 	if err != nil {
 		return err
 	}
 
+	// Server responds with IP of target
+	var ip Resp
+	json.NewDecoder(resp.Body).Decode(&ip)
+	if !ip.ok {
+		return fmt.Errorf("invalid key")
+	}
+
+	/*
+		resp, err = http.Get(ip.data)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+	*/
+	// THIS OR
+	/*
+		conn, err := net.Dial("tcp", ip.data)
+		if err != nil {
+			return err
+		}
+		defer conn.Close()
+	*/
+
+	out, err := os.Create(OUTPUTDIR + "output1") // TODO how to get filename?
+	if err != nil {
+		return err
+	}
+
+	// Download file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
 		return err
 	}
 
-  fmt.Println("success. saved file to path " + "output")
+	fmt.Println("success. saved file to path " + "output")
 	return nil
 }
 
