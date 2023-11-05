@@ -11,6 +11,7 @@ import (
 
 func up(path *string) error {
 	// TODO read file and POST req
+  fmt.Println("Not implemented yet!")
 	return nil
 }
 
@@ -34,6 +35,7 @@ func down(key *string) error {
 		return err
 	}
 
+  fmt.Println("success. saved file to path " + "output")
 	return nil
 }
 
@@ -61,5 +63,5 @@ func main() {
 		return
 	}
 
-	fmt.Println("success.")
+	fmt.Println("exiting.")
 }
