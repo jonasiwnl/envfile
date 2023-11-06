@@ -8,26 +8,42 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
-type Resp struct {
-	data string
-	ok   bool
+const SERVERURL = "http://localhost:8080"
+const OUTPUTDIR = "output/"
+const RECEIVERADDR = "http://localhost:8080"
+
+type DownResp struct {
+	ip       string
+	filename string
+	ok       bool
+}
+
+type UpResp struct {
+	key string
+	ok  bool
 }
 
 func up(path *string) error {
-	resp, err := http.Post(SERVERURL, "text/plain", bytes.NewBuffer(([]byte(*path))))
+	resp, err := http.Post(
+		SERVERURL,
+		"text/plain",
+		// Grabs filename from the end of the path
+		bytes.NewBuffer(([]byte(filepath.Base(*path)))),
+	)
 	if err != nil {
 		return err
 	}
 
-	var key Resp
-	json.NewDecoder(resp.Body).Decode(&key)
-	if !key.ok {
+	var body UpResp
+	json.NewDecoder(resp.Body).Decode(&body)
+	if !body.ok {
 		return fmt.Errorf("server error. sorry !")
 	}
 
-	fmt.Println("*** success. key is " + key.data + " ***")
+	fmt.Println("*** success. key is " + body.key + " ***")
 
 	// listen for requests
 	listener, err := net.Listen("tcp", RECEIVERADDR)
@@ -42,7 +58,12 @@ func up(path *string) error {
 	}
 	defer conn.Close()
 
-	_, err = io.Copy(*path, conn)
+	file, err := os.Open(*path)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(file, conn)
 	if err != nil {
 		return err
 	}
@@ -50,7 +71,7 @@ func up(path *string) error {
 	fmt.Println("Do you want to remove this file? (y/N)")
 	var ans string
 	fmt.Scanln(&ans)
-	if ans == "y" {
+	if ans == "y" || ans == "Y" {
 		err = os.Remove(*path)
 		if err != nil {
 			return err
@@ -68,14 +89,14 @@ func down(key *string) error {
 	}
 
 	// Server responds with IP of target
-	var ip Resp
-	json.NewDecoder(resp.Body).Decode(&ip)
-	if !ip.ok {
+	var body DownResp
+	json.NewDecoder(resp.Body).Decode(&body)
+	if !body.ok {
 		return fmt.Errorf("invalid key")
 	}
 
 	/*
-		resp, err = http.Get(ip.data)
+		resp, err = http.Get(body.ip)
 		if err != nil {
 			return err
 		}
@@ -83,14 +104,14 @@ func down(key *string) error {
 	*/
 	// THIS OR
 	/*
-		conn, err := net.Dial("tcp", ip.data)
+		conn, err := net.Dial("tcp", body.ip)
 		if err != nil {
 			return err
 		}
 		defer conn.Close()
 	*/
 
-	out, err := os.Create(OUTPUTDIR + "output1") // TODO how to get filename?
+	out, err := os.Create(OUTPUTDIR + body.filename)
 	if err != nil {
 		return err
 	}
@@ -106,17 +127,28 @@ func down(key *string) error {
 }
 
 func main() {
-	if len(os.Args) != 3 {
+	if len(os.Args) < 3 {
 		fmt.Println("USAGE: sink COMMAND PATH/KEY")
 		return
 	}
 
-	key := os.Args[1]
+	key := os.Args[2]
 	var err error
 
 	switch os.Args[1] {
 	case "up":
-		err = up(&key)
+		var dir string
+		dir, err = os.Getwd()
+		if err != nil {
+			break
+		}
+
+		path := filepath.Join(dir, key)
+		_, err = os.Stat(path)
+		if err != nil {
+			break
+		}
+		err = up(&path)
 	case "down":
 		err = down(&key)
 	default:

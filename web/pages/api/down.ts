@@ -18,6 +18,6 @@ export default function Down(
         return;
     }
 
-    // TODO lookup and respond with IP
-    res.status(200).json({ key, ip: "idk, sorry" });
+    // TODO lookup and respond with IP, filename
+    res.status(200).json({ key, ip: "idk, sorry", filename: "outputlol" });
 }

@@ -13,7 +13,7 @@ export default function Up(
         return;
     }
 
-    // TODO generate key
+    // TODO generate key and extract filename from request
 
     res.status(200).json({ key: "coolkey" });
 }
